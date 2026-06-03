@@ -9,11 +9,33 @@ This plan implements a multi-service PSX portfolio management platform with a Re
 - [ ] 1. Set up project structure and shared types
   - [ ] 1.1 Initialize monorepo structure with frontend, backend, and python-services directories
     - Create directory structure: `frontend/` (React/TypeScript), `backend/` (Node.js/TypeScript), `python-services/` (Python)
-    - Initialize `backend/package.json` with Express, Mongoose, axios, and TypeScript dependencies
-    - Initialize `frontend/package.json` with React, React Router, axios, and TypeScript dependencies
-    - Initialize `python-services/requirements.txt` with Flask, pymongo, beautifulsoup4, requests, openai
+    - Create root `.npmrc` with `save-exact=true` and `package-lock=true` to enforce exact pinned versions and prevent auto-updates
+    - Initialize `backend/package.json` with exact pinned dependencies (NO ^ or ~ ranges):
+      - `"express": "5.1.0"`
+      - `"mongoose": "8.9.5"`
+      - `"axios": "1.14.0"` ⚠️ DO NOT use 1.14.1 (compromised supply chain attack)
+      - `"typescript": "5.8.3"` (devDependency)
+      - `"@types/express": "5.0.0"` (devDependency)
+      - `"@types/node": "22.10.0"` (devDependency)
+    - Initialize `frontend/package.json` with exact pinned dependencies (NO ^ or ~ ranges):
+      - `"react": "19.1.0"`
+      - `"react-dom": "19.1.0"`
+      - `"react-router-dom": "7.6.2"`
+      - `"axios": "1.14.0"` ⚠️ DO NOT use 1.14.1 (compromised)
+      - `"typescript": "5.8.3"` (devDependency)
+      - `"vite": "6.0.0"` (devDependency)
+      - `"@vitejs/plugin-react": "4.3.4"` (devDependency)
+    - Initialize `python-services/requirements.txt` with exact pinned versions (use `==` not `>=`):
+      - `Flask==3.1.0`
+      - `pymongo==4.10.1`
+      - `beautifulsoup4==4.12.3`
+      - `requests==2.32.3`
+      - `openai==1.58.1`
+    - Create `python-services/pip.conf` or document constraint: always use `--no-deps` and `--require-hashes` for production installs
     - Set up TypeScript configs for backend and frontend
+    - Commit `package-lock.json` files — installs must use `npm ci` (not `npm install`) to respect lockfile exactly
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
+    - _Security: Pinned versions prevent supply chain attacks (axios 1.14.1 RAT incident, March 2026). No auto-updates._
 
   - [ ] 1.2 Define MongoDB data models and TypeScript interfaces for backend
     - Create `backend/src/models/Holding.ts` — Mongoose schema with fields: user_id, symbol, quantity, average_buying_price, created_at, updated_at, version (for optimistic concurrency)
